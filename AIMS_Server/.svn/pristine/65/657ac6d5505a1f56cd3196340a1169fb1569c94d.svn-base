@@ -1,0 +1,137 @@
+package kr.or.ddit.service.auction;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import kr.or.ddit.dao.aution.auctionDAOImpl;
+import kr.or.ddit.vo.A_articleVO;
+
+
+public class auctionServerImpl  extends UnicastRemoteObject implements IauctionServer{
+
+	private Map<String,List<Socket>> roomMap = Collections.synchronizedMap(new HashMap<String, List<Socket>>());
+	
+	private auctionDAOImpl dao; 
+	private static auctionServerImpl instance;
+
+	private auctionServerImpl() throws RemoteException {
+		dao = auctionDAOImpl.getInstance();
+		StartSocket th = new StartSocket();
+		th.start();
+	}
+	
+	public static auctionServerImpl getInstance() {
+		if(instance == null) {
+			try {
+				instance = new auctionServerImpl();
+				
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			} 
+		}
+		return  instance;
+	}
+	
+	
+	@Override
+	public List<A_articleVO> getMyArticleList(String mem_id) throws RemoteException {
+		return dao.getMyArticleList(mem_id);
+	}
+
+	@Override
+	public List<A_articleVO> getTotalArticleList() throws RemoteException {	
+		return dao.getTotalArticleList();
+	}
+
+	@Override
+	public A_articleVO getArticleInfo(String a_art_no) throws RemoteException {
+		return dao.getArticleInfo(a_art_no);
+	}
+
+	void sendtoAlldata(String a_art_no,String data) {
+//		System.out.println(roomMap.get(articleVO).size());
+		for(Socket socket:roomMap.get(a_art_no)) {
+			DataOutputStream out ;
+			try {
+				out = new DataOutputStream(socket.getOutputStream());
+				out.writeUTF(data);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	class insertSocket extends Thread{
+		Socket socket;
+		DataInputStream in;
+		DataOutputStream out;
+		String a_art_no;
+		String won;
+		public insertSocket(Socket socket) {
+			this.socket = socket;
+			try {
+				in = new DataInputStream(socket.getInputStream());
+				out = new DataOutputStream(socket.getOutputStream());
+				a_art_no = in.readUTF();
+//				won = dao.getArticleInfo(a_art_no).getA_art_low();
+//				out.writeUTF(won);
+				
+				if(roomMap.get(a_art_no)==null) {
+					List<Socket>list = Collections.synchronizedList(new ArrayList<Socket>());
+					list.add(socket);
+					roomMap.put(a_art_no, list);
+				}else {
+					roomMap.get(a_art_no).add(socket);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}	
+		}
+		
+		@Override
+		public void run() {
+			try {
+				while (socket != null) {
+					 String id = in.readUTF();
+					 String won = in.readUTF();
+					System.out.println(id);
+					System.out.println(won);
+					sendtoAlldata(a_art_no, id); // 아이디
+					sendtoAlldata(a_art_no, won); // 금액
+
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				roomMap.get(a_art_no).remove(socket);
+			}
+		}
+	}
+	
+	
+	class StartSocket extends Thread{
+		@Override
+		public void run() {
+			try {
+				ServerSocket server = new ServerSocket(9999);
+				while (server != null) {
+					Socket socket = server.accept();
+					insertSocket th = new insertSocket(socket);
+					th.start();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+}

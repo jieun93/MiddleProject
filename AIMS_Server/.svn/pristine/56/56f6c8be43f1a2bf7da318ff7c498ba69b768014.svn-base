@@ -1,0 +1,67 @@
+package kr.or.ddit.dao.member;
+
+import com.ibatis.sqlmap.client.SqlMapClient;
+
+import kr.or.ddit.ibatis.BuildedSqlMapClient;
+
+public class MemberImplDao  implements IMemberDao {
+
+	private SqlMapClient smc;
+	
+	private static MemberImplDao dao;
+	
+	public MemberImplDao() {
+		smc = BuildedSqlMapClient.getSqlMapClient();
+	}
+	
+	
+	public static MemberImplDao	getInstance() {
+		if(dao == null) dao = new MemberImplDao();
+		
+		return dao;
+		
+	}
+	
+	//회원가입
+	@Override
+	public int insertMemberJoin(String memVO) {
+		int cnt = 0;
+		try {
+			Object obj = smc.insert("memList.insertMemberJoin",memVO);
+			if(obj == null) {
+				cnt = 1;
+				System.out.println("insert 작업 성공 !!!!");
+			}else {
+				cnt = 0;
+				System.out.println("insert 작업 실패 ...");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return cnt;
+	}
+
+	// 아이디 중복확인 
+	@Override
+	public int getMemberId(String mem_id) {
+		int cnt = 0;
+		try {
+			Object obj = smc.insert("memList.getMemberId",mem_id);
+			if(obj == null) {
+				cnt = 1;
+				System.out.println("insert 중복확인  작업 성공");
+			}else {
+				cnt = 0;
+				System.out.println("insert 중복확인 작업 실패 ...");
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return cnt;
+	}
+	
+	
+	
+
+}

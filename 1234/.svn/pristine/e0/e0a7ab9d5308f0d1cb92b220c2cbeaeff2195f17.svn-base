@@ -1,0 +1,74 @@
+
+TableView{
+	-fx-base : #7999c9;
+	-fx-background-color: #d9d9d9;
+	-fx-border-color : #7999c9;
+	
+}
+
+#btnTerms{
+	-fx-font-family : "NanumGothicExtraBold";
+	-fx-font-size : 24.0px;
+	-fx-background-color: #424242;
+	-fx-text-fill : #ffffff;
+}
+
+#btnFormat{
+	-fx-font-family : "NanumGothicExtraBold";
+	-fx-font-size : 24.0px;
+	-fx-background-color: #424242;
+	-fx-text-fill : #ffffff;
+}
+
+#btnLaw{
+	-fx-font-family : "NanumGothicExtraBold";
+	-fx-font-size : 24.0px;
+	-fx-background-color: #424242;
+	-fx-text-fill : #ffffff;
+}
+
+#btnStep{
+	-fx-font-family : "NanumGothicExtraBold";
+	-fx-font-size : 24.0px;
+	-fx-background-color: #424242;
+	-fx-text-fill : #ffffff;
+}
+
+#btnGuide{
+	-fx-font-family : "NanumGothicExtraBold";
+	-fx-font-size : 24.0px;
+	-fx-background-color: #424242;
+	-fx-text-fill : #ffffff;
+}
+
+#btnSiteMap{
+	-fx-font-family : "NanumGothicExtraBold";
+	-fx-font-size : 24.0px;
+	-fx-background-color: #424242;
+	-fx-text-fill : #ffffff;
+}
+
+#btnHome{
+	-fx-font-family : "NanumGothicExtraBold";
+	-fx-font-size : 20.0px;
+	-fx-background-color: #424242;
+	-fx-text-fill : #ffffff;
+}
+
+#btnFAQ{
+	-fx-font-family : "NanumGothicExtraBold";
+	-fx-font-size : 24.0px;
+	-fx-background-color: #424242;
+	-fx-text-fill : #ffffff;
+}
+#btnAgency{
+	-fx-font-family : "NanumGothicExtraBold";
+	-fx-font-size : 24.0px;
+	-fx-background-color: #424242;
+	-fx-text-fill : #ffffff;
+}
+
+AnchorPane{
+	-fx-background-color: #ffffff;
+}
+
